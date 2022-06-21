@@ -5,7 +5,7 @@ from typing import Dict, List
 
 import chardet
 import re
-from jinja2 import Environment, FileSystemLoader  # available from pip
+from jinja2 import Environment,  PackageLoader
 
 DEBUG = False
 
@@ -47,7 +47,8 @@ class Clippings(object):
         '''
         Output the clippings dict to HTML, using a Jinja2 template
         '''
-        env = Environment(loader=FileSystemLoader('./'))
+        env = Environment(loader=PackageLoader('whoarder', 'templates'),
+                          autoescape=True)
         template = env.get_template('template1.html')
         render = template.render(clippings=self.clippings,
                                  book_author_couples=self.book_author_couples)
