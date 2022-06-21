@@ -103,7 +103,7 @@ class ClippingsIterator(object):
     # - 您在第 1656 页（位置 #18097-18097）的标注 | 添加于 2022年1月9日星期日 下午11:11:58
     _clipping_line2_chinese = re.compile(r'''
         ^-\ (您在)(第\ (?P<page>\w*)\ 页)?(（?位置\ \#(?P<location>.*?)）?)?                         
-        的(?P<type>(标注|笔记))
+        的(?P<type>(标注|笔记|书签))
         \ \|\ 添加于\ (?P<date>.*)$                          #  | 添加于 ...
         ''', re.VERBOSE | re.IGNORECASE)
 
@@ -154,7 +154,13 @@ class ClippingsIterator(object):
         zh = self._clipping_line2_chinese.search(content[1])
         if zh:
             dict = zh.groupdict()
-            dict['type'] = 'Highlight' if dict['type'] == '标注' else 'Note'
+            match dict['type']:
+                case '标注':
+                    dict['type'] = 'Highlight'
+                case '笔记':
+                    dict['type'] = 'Note'
+                case '书签':
+                    dict['type'] = 'Bookmark'
             dict['page'] = 'page ' + dict['page'] if dict['page'] else None
         else:
             dict = unwrap(
